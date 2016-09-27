@@ -8,8 +8,10 @@
 // Inputs: None
 // Outputs: None
 // Notes: These five pins are connected to hardware on the LaunchPad
-void EdgeTrigured_Init(void){                          
+void EdgeTrigured_Init(void){    
+volatile unsigned long delay;	
   SYSCTL_RCGC2_R |= 0x00000020; // (a) activate clock for port F
+	delay = SYSCTL_RCGC2_R;
   GPIO_PORTF_DIR_R &= ~0x11;    // (c) make PF4 and PF0 in (built-in button)
   GPIO_PORTF_AFSEL_R &= ~0x11;  //     disable alt funct on PF4 and PF0
   GPIO_PORTF_DEN_R |= 0x11;     //     enable digital I/O on PF4 and PF0  
