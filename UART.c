@@ -34,8 +34,8 @@
 // Input: none
 // Output: none
 void OutCRLF(void){
-  UART_OutChar(CR);
-  UART_OutChar(LF);
+  UART1_OutChar(CR);
+  UART1_OutChar(LF);
 }
 
 //------------UART_Init------------
@@ -44,6 +44,7 @@ void OutCRLF(void){
 // Input: none
 // Output: none
 void UART_Init(void){
+	
   SYSCTL_RCGC1_R |= SYSCTL_RCGC1_UART0; // activate UART0
   SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOA; // activate port A
   UART0_CTL_R &= ~UART_CTL_UARTEN;      // disable UART
@@ -57,6 +58,20 @@ void UART_Init(void){
                                         // configure PA1-0 as UART
   GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R&0xFFFFFF00)+0x00000011;
   GPIO_PORTA_AMSEL_R &= ~0x03;          // disable analog functionality on PA
+	
+	
+	SYSCTL_RCGC1_R |= SYSCTL_RCGC1_UART1;  // activate UART1
+  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOC;  // activate port C
+  UART1_CTL_R &= ~0x00000001;    // disable UART
+  UART1_IBRD_R = 27;     // IBRD = int(50,000,000/(16*115,200)) = int(43.40278)
+  UART1_FBRD_R = 8;     // FBRD = round(0.40278 * 64) = 26
+  UART1_LCRH_R = 0x00000070;  // 8 bit, no parity bits, one stop, FIFOs
+  UART1_CTL_R |= 0x00000001;     // enable UART
+  GPIO_PORTC_AFSEL_R |= 0x30;    // enable alt funct on PC5-4
+  GPIO_PORTC_DEN_R |= 0x30;      // configure PC5-4 as UART1
+  GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R&0xFF00FFFF)+0x00220000;
+  GPIO_PORTC_AMSEL_R &= ~0x30;   // disable analog on PC5-4
+	
 }
 
 //------------UART_InChar------------
@@ -67,6 +82,11 @@ unsigned char UART_InChar(void){
   while((UART0_FR_R&UART_FR_RXFE) != 0);
   return((unsigned char)(UART0_DR_R&0xFF));
 }
+
+unsigned char UART1_InChar(void){
+  while((UART1_FR_R&UART_FR_RXFE) != 0);
+  return((unsigned char)(UART1_DR_R&0xFF));
+}
 //------------UART_OutChar------------
 // Output 8-bit to serial port
 // Input: letter is an 8-bit ASCII character to be transferred
@@ -74,6 +94,11 @@ unsigned char UART_InChar(void){
 void UART_OutChar(unsigned char data){
   while((UART0_FR_R&UART_FR_TXFF) != 0);
   UART0_DR_R = data;
+}
+
+void UART1_OutChar(unsigned char data){
+  while((UART1_FR_R&UART_FR_TXFF) != 0);
+  UART1_DR_R = data;
 }
 
 
@@ -84,6 +109,13 @@ void UART_OutChar(unsigned char data){
 void UART_OutString(char *pt){
   while(*pt){
     UART_OutChar(*pt);
+    pt++;
+  }
+}
+
+void UART1_OutString(char *pt){
+  while(*pt){
+    UART1_OutChar(*pt);
     pt++;
   }
 }
@@ -230,6 +262,29 @@ char character;
       UART_OutChar(character);
     }
     character = UART_InChar();
+  }
+  *bufPt = 0;
+}
+
+void UART1_InString(char *bufPt, unsigned short max) {
+int length=0;
+char character;
+  character = UART1_InChar();
+  while(character != CR){
+    if(character == BS){
+      if(length){
+        bufPt--;
+        length--;
+        UART1_OutChar(BS);
+      }
+    }
+    else if(length < max){
+      *bufPt = character;
+      bufPt++;
+      length++;
+      UART1_OutChar(character);
+    }
+    character = UART1_InChar();
   }
   *bufPt = 0;
 }

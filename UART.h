@@ -52,18 +52,21 @@ void UART_Init(void);
 // Input: none
 // Output: ASCII code for key typed
 unsigned char UART_InChar(void);
+unsigned char UART1_InChar(void);
 
 //------------UART_OutChar------------
 // Output 8-bit to serial port
 // Input: letter is an 8-bit ASCII character to be transferred
 // Output: none
 void UART_OutChar(unsigned char data);
+void UART1_OutChar(unsigned char data);
 
 //------------UART_OutString------------
 // Output String (NULL termination)
 // Input: pointer to a NULL-terminated string to be transferred
 // Output: none
 void UART_OutString(char *pt);
+void UART1_OutString(char *pt);
 
 //------------UART_InUDec------------
 // InUDec accepts ASCII input in unsigned decimal format
@@ -114,3 +117,4 @@ void UART_OutUHex(unsigned long number);
 // Output: Null terminated string
 // -- Modified by Agustinus Darmawan + Mingjie Qiu --
 void UART_InString(char *bufPt, unsigned short max);
+void UART1_InString(char *bufPt, unsigned short max);

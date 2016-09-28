@@ -40,19 +40,20 @@ int main(void){
 	PLL_Init();							//initialze PLL at 50Mhz clock
   UART_Init();            //initialize UART on Port A with baud rate of 115,200
   OutCRLF();
-	UART_OutString("CECS 447");
+	UART1_OutString("CECS 447");
   OutCRLF();
-	UART_OutString("Project 1: Part 1");
+	UART1_OutString("Project 1: Part 1");
   OutCRLF();
-	UART_OutString("Johnny Cuenca, Christian Bracamontes");
+	UART1_OutString("Johnny Cuenca, Christian Bracamontes");
   OutCRLF();
   
   while(1){
 		//ofb7f7fbfi
 		i = UART_InChar();
-		if(i == 'g' || i == 'G'){																	//check if g or G input
-			GPIO_PORTF_DATA_R &= 0x08;															//used to clear data port, turn off other leds
-			GPIO_PORTF_DATA_R ^= 0x08;															//turn on green LED, and toggle it.
+		if(i == 'g' || i == 'G'){			//check if g or G input
+			UART1_OutChar(i);
+			//GPIO_PORTF_DATA_R &= 0x08;															//used to clear data port, turn off other leds
+			//GPIO_PORTF_DATA_R ^= 0x08;															//turn on green LED, and toggle it.
 			if((GPIO_PORTF_DATA_R &= 0x08) == 0){										//check if Green LED is off
 				UART_OutString("Green LED is off");OutCRLF();}				//Display green LED off.
 			else{
@@ -75,9 +76,8 @@ int main(void){
 				UART_OutString("Blue LED is on");OutCRLF();}					//Display RED Blue on.
 		}
 		else{
-			UART_OutString("InString: ");
-			UART_InString(string,19);
-			UART_OutString(" OutString="); UART_OutString(string); OutCRLF();
+			UART1_InString(string,19);
+			UART_OutString(string); OutCRLF();
 		}
 		display();
 		Delay(833333);

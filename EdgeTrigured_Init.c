@@ -38,6 +38,7 @@ void GPIOPortF_Handler(void){
 		GPIO_PORTF_DATA_R = 0x0E;										//Turn off all LEDS
 		UART_OutString("ALL LEDS turned on");		//output "ALL LEDS turned off" on terminal
 		OutCRLF();
+		UART1_OutChar('g');
 		GPIO_PORTF_ICR_R = 0x10;									//clear flag
 	}
 }
