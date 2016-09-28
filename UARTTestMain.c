@@ -39,17 +39,17 @@ int main(void){
   Nokia5110_Init();	 //Nokia Initialization
 	PLL_Init();							//initialze PLL at 50Mhz clock
   UART_Init();            //initialize UART on Port A with baud rate of 115,200
-  OutCRLF();
-	UART_OutString("CECS 447");
-  OutCRLF();
-	UART_OutString("Project 1: Part 1");
-  OutCRLF();
-	UART_OutString("Johnny Cuenca, Christian Bracamontes");
-  OutCRLF();
+  //OutCRLF();
+	//UART_OutString("CECS 447");
+  //OutCRLF();
+	//UART_OutString("Project 1: Part 1");
+  //OutCRLF();
+	//UART_OutString("Johnny Cuenca, Christian Bracamontes");
+  //OutCRLF();
   
   while(1){
 		//ofb7f7fbfi
-		i = UART_InChar();
+		i = UART1_InChar();
 		if(i == 'g' || i == 'G'){																	//check if g or G input
 			GPIO_PORTF_DATA_R &= 0x08;															//used to clear data port, turn off other leds
 			GPIO_PORTF_DATA_R ^= 0x08;															//turn on green LED, and toggle it.
